@@ -60,6 +60,12 @@ typings/
 # next.js build output
 .next
 
+# emacs
+*~
+\#*\#
+
 # Custom
 dev/
 dist/
+
+config/local-*.yml
