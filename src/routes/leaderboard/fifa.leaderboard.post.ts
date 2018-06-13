@@ -5,6 +5,7 @@ import * as Joi from 'joi';
 
 @Route({
     path: '/leaderboard/{leaderboardId}',
+    // POST so that slack can query it.
     method: 'POST',
     config: {
         validate: {

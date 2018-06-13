@@ -10,18 +10,29 @@ import { Config } from '@hapiness/config';
 export class FifaPredictorService {
     private baseUrl = 'https://api-bracketchallenge.fifa.com/privateleaguerestapi/';
     private bearer = Config.get<string>('fifa.bearer');
+    private cache = {
+        leaderboard: [],
+        expiredAt: 0
+    };
 
     private offset = 0;
 
     constructor(private http: HttpService) { }
 
     getLeaderboard(leaderBoardId: string): Observable<Leaderboard[]> {
+        if (this.cache.expiredAt > Date.now()) {
+            return Observable.of(this.cache.leaderboard);
+        }
         const limit = 10;
         const url = `${this.baseUrl}leaderboard/${leaderBoardId}/1/?limit=${limit}&offset=`;
 
         return this.fetchItems(url)
             .toArray<Leaderboard>()
-            .map(results => results.map(({ id, ...leaderboard }) => leaderboard as Leaderboard));
+            .map(results => results.map(({ id, ...leaderboard }) => leaderboard as Leaderboard))
+            .do(result => {
+                this.cache.leaderboard = result;
+                this.cache.expiredAt = Date.now() + 36000
+            })
     }
 
     fetchItems(url): Observable<Leaderboard> {
