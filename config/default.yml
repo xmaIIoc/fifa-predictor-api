@@ -1,0 +1,8 @@
+server:
+  host: 0.0.0.0
+  port: 4242
+
+fifa:
+  auth:
+    token: some-token
+  bearer: some-bearer
