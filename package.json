@@ -1,0 +1,45 @@
+{
+    "name": "fifa-predictor-slackbot-result",
+    "version": "1.0.0",
+    "private": true,
+    "description": "Fifa predictor slackbot result",
+    "main": "index.js",
+    "scripts": {
+        "test": "NODE_ENV=test make test",
+        "pretest": "make pretest",
+        "coveralls": "make coveralls",
+        "packaging": "make packaging",
+        "prebuild": "npm test && make clean",
+        "build": "make tsc",
+        "postbuild": "make packaging",
+        "dev:watch": "make clean-dev && concurrently --raw -k \"make build-dev\" \"make run-dev\""
+    },
+    "dependencies": {
+        "@hapiness/config": "^1.2.0",
+        "@hapiness/core": "^1.5.0",
+        "@hapiness/http": "^1.1.2",
+        "@juneil/entityts": "^1.0.0",
+        "debug": "^3.1.0",
+        "joi": "^13.4.0",
+        "rxjs": "^5.5.8"
+    },
+    "devDependencies": {
+        "@hapiness/biim": "^1.4.0",
+        "@types/fs-extra": "^5.0.3",
+        "@types/joi": "^13.0.8",
+        "@types/node": "^9.6.1",
+        "bunyan": "^1.8.10",
+        "concurrently": "^3.5.1",
+        "fs-extra": "^6.0.1",
+        "nodemon": "^1.11.0",
+        "rimraf": "^2.6.2",
+        "ts-node": "^3.3.0",
+        "tslint": "^5.8.0",
+        "typescript": "^2.9.1"
+    },
+    "engines": {
+        "node": "^9.6.1"
+    },
+    "author": "xmalloc",
+    "license": "ISC"
+}
