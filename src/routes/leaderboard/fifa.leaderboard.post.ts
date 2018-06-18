@@ -8,6 +8,7 @@ import * as Joi from 'joi';
     // POST so that slack can query it.
     method: 'POST',
     config: {
+        // auth: false,
         validate: {
             params: {
                 leaderboardId: Joi.string().required(),

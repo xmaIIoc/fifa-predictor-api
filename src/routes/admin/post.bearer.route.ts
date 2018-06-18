@@ -1,6 +1,5 @@
 import { OnPost, Route, Request, ReplyNoContinue } from '@hapiness/core';
 import { FifaPredictorService } from '../../services';
-import { Observable } from 'rxjs/Observable';
 import * as Joi from 'joi';
 
 @Route({
