@@ -19,7 +19,7 @@ export class FifaPredictorService {
 
     constructor(private http: HttpService) { }
 
-    getLeaderboard(leaderBoardId: string): Observable<Leaderboard[]> {
+    getLeaderboard(leaderBoardId: string): Observable<any> {
         if (this.cache.expiredAt > Date.now()) {
             return Observable.of(this.cache.leaderboard);
         }
@@ -33,6 +33,7 @@ export class FifaPredictorService {
                 this.cache.leaderboard = result;
                 this.cache.expiredAt = Date.now() + 36000
             })
+            .map(result => this.formatLadder(result));
     }
 
     fetchItems(url): Observable<Leaderboard> {
@@ -52,6 +53,9 @@ export class FifaPredictorService {
                     next$
                 );
             });
+    }
+    public setBearer(bearer: string): void {
+        this.bearer = bearer;
     }
 
     private doCall(url: string): Observable<FifaResultResult> {
@@ -73,7 +77,22 @@ export class FifaPredictorService {
             });
     }
 
-    setBearer(bearer: string): void {
-        this.bearer = bearer;
+    private formatLadder(ladders: Leaderboard[]): { username: string, attachements: any } {
+
+        const result = {
+            username: 'fifabot',
+            attachements: ladders.map((user) => ({
+                title: user.user_name,
+                text: `Current Position: ${user.position} with ${user.points} points`
+            }))
+        };
+
+        (result.attachements[0] as any).pretext = 'Ladder';
+        result.attachements[0].title = result.attachements[0].title.concat(' 👑');
+        result.attachements[0].text = result.attachements[0].text.concat(' 🏅');
+        result.attachements[1].text = result.attachements[1].text.concat(' 🥈');
+        result.attachements[2].text = result.attachements[2].text.concat(' 🥉');
+
+        return result;
     }
 }
