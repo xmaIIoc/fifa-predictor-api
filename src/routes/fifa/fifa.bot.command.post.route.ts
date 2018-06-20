@@ -5,13 +5,12 @@ import * as Joi from 'joi';
 
 @Route({
     path: '/fifa',
-    // POST so that slack can query it.
     method: 'POST',
     config: {
-        // auth: false,
         validate: {
             query: {
                 leaderboard: Joi.string(),
+                token: Joi.string()
             }
         },
         description: 'Get the leadeboard',
@@ -35,8 +34,8 @@ export class PostFifaSlackBotCommandRoute implements OnPost {
      * @param request
      */
     onPost(request: Request, reply: ReplyNoContinue): Observable<any> {
-        console.log(`request.params => `, request.params);
-        const command = this.commands[request.params.text];
+        console.log(`request.payload => `, request.payload);
+        const command = this.commands[request.payload.text];
 
         if (!command) {
             reply({
@@ -49,7 +48,7 @@ export class PostFifaSlackBotCommandRoute implements OnPost {
         }
 
         reply();
-        return command(request.params, request.query.leaderboard, request.params);
+        return command(request.payload, request.query.leaderboard);
         // return ;
     }
 }

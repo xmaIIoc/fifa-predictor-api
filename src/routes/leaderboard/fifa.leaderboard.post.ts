@@ -18,7 +18,7 @@ import * as Joi from 'joi';
     providers: [ FifaPredictorService ]
 })
 export class GetFifaPredictorResultLeaderBoard implements OnGet {
-    constructor(private fifa: FifaPredictorService) {}
+    constructor(/* private fifa: FifaPredictorService */) {}
 
     /**
      * OnGet implementation
