@@ -46,6 +46,7 @@ export class FifaPredictorService {
                     body: res,
                     json: true
                 })
+                .do(_abc_ => console.log(`RESPONSE ======> `, _abc_))
                 .validateResponse();
             })
             .subscribe(null,
@@ -94,22 +95,22 @@ export class FifaPredictorService {
             });
     }
 
-    private formatLadder(ladders: Leaderboard[]): { username: string, response_type: string, attachements: any } {
+    private formatLadder(ladders: Leaderboard[]): { username: string, response_type: string, attachments: any } {
 
         const result = {
             username: 'fifabot',
             response_type: 'in_channel',
-            attachements: ladders.map((user) => ({
+            attachments: ladders.map((user) => ({
                 title: user.user_name,
                 text: `Current Position: ${user.position} with ${user.points} points`
             }))
         };
 
-        (result.attachements[0] as any).pretext = 'Ladder';
-        result.attachements[0].title = result.attachements[0].title.concat(' 👑');
-        result.attachements[0].text = result.attachements[0].text.concat(' 🏅');
-        result.attachements[1].text = result.attachements[1].text.concat(' 🥈');
-        result.attachements[2].text = result.attachements[2].text.concat(' 🥉');
+        (result.attachments[0] as any).pretext = 'Ladder';
+        result.attachments[0].title = result.attachments[0].title.concat(' 👑');
+        result.attachments[0].text = result.attachments[0].text.concat(' 🏅');
+        result.attachments[1].text = result.attachments[1].text.concat(' 🥈');
+        result.attachments[2].text = result.attachments[2].text.concat(' 🥉');
 
         return result;
     }
