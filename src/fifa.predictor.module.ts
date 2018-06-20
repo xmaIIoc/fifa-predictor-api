@@ -1,5 +1,5 @@
 import { HapinessModule, OnStart, Inject, HttpServerExt, Server, HttpServerService } from '@hapiness/core';
-import { PostFifaPredictorResultLeaderBoard, PostBearerRoute } from './routes';
+import { PostBearerRoute, PostFifaSlackBotCommandRoute } from './routes';
 import { FifaPredictorService } from './services';
 import { HttpService } from '@hapiness/http';
 import { Biim } from '@hapiness/biim';
@@ -10,8 +10,9 @@ import { Config } from '@hapiness/config';
     imports: [
     ],
     declarations: [
-        PostFifaPredictorResultLeaderBoard,
-        PostBearerRoute
+        PostFifaSlackBotCommandRoute,
+        PostBearerRoute,
+
     ],
     providers: [
         HttpServerService,

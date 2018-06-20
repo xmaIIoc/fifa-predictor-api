@@ -10,30 +10,46 @@ import { Config } from '@hapiness/config';
 export class FifaPredictorService {
     private baseUrl = 'https://api-bracketchallenge.fifa.com/privateleaguerestapi/';
     private bearer = Config.get<string>('fifa.bearer');
-    private cache = {
-        leaderboard: [],
-        expiredAt: 0
-    };
+    // private cache = {
+    //     leaderboard: [],
+    //     expiredAt: 0
+    // };
 
     private offset = 0;
 
     constructor(private http: HttpService) { }
 
-    getLeaderboard(leaderBoardId: string): Observable<any> {
-        if (this.cache.expiredAt > Date.now()) {
-            return Observable.of(this.cache.leaderboard);
-        }
+    getLeaderboard(leaderBoardId: string, params: any): any {
+        // if (this.cache.expiredAt > Date.now()) {
+        //     return Observable.of(this.cache.leaderboard);
+        // }
         const limit = 10;
         const url = `${this.baseUrl}leaderboard/${leaderBoardId}/1/?limit=${limit}&offset=`;
 
-        return this.fetchItems(url)
+        this.fetchItems(url)
             .toArray<Leaderboard>()
             .map(results => results.map(({ id, ...leaderboard }) => leaderboard as Leaderboard))
-            .do(result => {
-                this.cache.leaderboard = result;
-                this.cache.expiredAt = Date.now() + 36000
+            // .do(result => {
+            //     this.cache.leaderboard = result;
+            //     this.cache.expiredAt = Date.now() + 36000
+            // })
+            // .flatMap(result => {
+            // })
+            .flatMap(result => params.response_url ? Observable.of(result) : Observable.throw('no response_url to answer'))
+            .flatMap(result => {
+                const res = this.formatLadder(result);
+
+                return this.http.post(params.response_url, {
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body: res
+                })
+                .validateResponse();
             })
-            .map(result => this.formatLadder(result));
+            .subscribe(null,
+                err => console.log('Error => ', err)
+            );
     }
 
     fetchItems(url): Observable<Leaderboard> {
@@ -81,6 +97,7 @@ export class FifaPredictorService {
 
         const result = {
             username: 'fifabot',
+            response_type: 'in_channel',
             attachements: ladders.map((user) => ({
                 title: user.user_name,
                 text: `Current Position: ${user.position} with ${user.points} points`

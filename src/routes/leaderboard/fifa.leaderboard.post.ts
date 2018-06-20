@@ -1,14 +1,12 @@
-import { OnPost, Route, Request } from '@hapiness/core';
+import { Route, /* Request, */ OnGet } from '@hapiness/core';
 import { FifaPredictorService } from '../../services';
 import { Observable } from 'rxjs/Observable';
 import * as Joi from 'joi';
 
 @Route({
     path: '/leaderboard/{leaderboardId}',
-    // POST so that slack can query it.
-    method: 'POST',
+    method: 'GET',
     config: {
-        // auth: false,
         validate: {
             params: {
                 leaderboardId: Joi.string().required(),
@@ -19,7 +17,7 @@ import * as Joi from 'joi';
     },
     providers: [ FifaPredictorService ]
 })
-export class PostFifaPredictorResultLeaderBoard implements OnPost {
+export class GetFifaPredictorResultLeaderBoard implements OnGet {
     constructor(private fifa: FifaPredictorService) {}
 
     /**
@@ -27,8 +25,9 @@ export class PostFifaPredictorResultLeaderBoard implements OnPost {
      *
      * @param request
      */
-    onPost(request: Request): Observable<any> {
-        console.log(`leaderboard ${request.params.leaderboardId}`);
-        return this.fifa.getLeaderboard(request.params.leaderboardId);
+    onGet(/* request: Request */): Observable<any> {
+        return Observable.of(null);
+        // console.log(`leaderboard ${request.params.leaderboardId}`);
+        // return this.fifa.getLeaderboard(request.params.leaderboardId, null);
     }
 }
