@@ -43,7 +43,8 @@ export class FifaPredictorService {
                     headers: {
                         'content-type': 'application/json'
                     },
-                    body: res
+                    body: res,
+                    json: true
                 })
                 .validateResponse();
             })
@@ -93,7 +94,7 @@ export class FifaPredictorService {
             });
     }
 
-    private formatLadder(ladders: Leaderboard[]): { username: string, attachements: any } {
+    private formatLadder(ladders: Leaderboard[]): { username: string, response_type: string, attachements: any } {
 
         const result = {
             username: 'fifabot',
