@@ -97,20 +97,24 @@ export class FifaPredictorService {
 
     private formatLadder(ladders: Leaderboard[]): { username: string, response_type: string, attachments: any } {
 
-        const result = {
+        const result: any = {
             username: 'fifabot',
             response_type: 'in_channel',
             attachments: ladders.map((user) => ({
                 title: user.user_name,
-                text: `Current Position: ${user.position} with ${user.points} points`
+                text: `Current Position: *${user.position}* with *${user.points}* points`,
+                mrkdwn_in: ['text']
             }))
         };
 
-        (result.attachments[0] as any).pretext = 'Ladder';
+        result.attachments[0].pretext = 'Ladder';
         result.attachments[0].title = result.attachments[0].title.concat(' 👑');
         result.attachments[0].text = result.attachments[0].text.concat(' 🏅');
+        result.attachments[0].color = '#D4AF37';
         result.attachments[1].text = result.attachments[1].text.concat(' 🥈');
+        result.attachments[1].color = '#C0C0C0';
         result.attachments[2].text = result.attachments[2].text.concat(' 🥉');
+        result.attachments[2].color = 'cd7f32';
 
         return result;
     }
