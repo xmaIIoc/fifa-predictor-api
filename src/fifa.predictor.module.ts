@@ -1,6 +1,6 @@
 import { HapinessModule, OnStart, Inject, HttpServerExt, Server, HttpServerService } from '@hapiness/core';
 import { PostBearerRoute, PostFifaSlackBotCommandRoute } from './routes';
-import { FifaPredictorService } from './services';
+import { FifaPredictorService, OrganisationService } from './services';
 import { HttpService } from '@hapiness/http';
 import { Biim } from '@hapiness/biim';
 import { Config } from '@hapiness/config';
@@ -17,22 +17,30 @@ import { Config } from '@hapiness/config';
     providers: [
         HttpServerService,
         HttpService,
-        FifaPredictorService
+        FifaPredictorService,
+        OrganisationService
     ],
     exports: [
-        FifaPredictorService
+        FifaPredictorService,
+        OrganisationService
     ]
 })
 export class FifaPredictorModule implements OnStart {
     private config;
 
-    constructor(@Inject(HttpServerExt) private httpServer: Server, private server: HttpServerService) {
+    constructor(
+        @Inject(HttpServerExt) private httpServer: Server,
+        private server: HttpServerService,
+        private organisation: OrganisationService
+    ) {
         this.config = Config.get<any>('fifa');
     }
 
     onStart() {
         console.log(`server started at ${this.httpServer.info.uri}`)
         this.setAuthValidation();
+        this.organisation.retrieveData()
+            .subscribe();
     }
 
     private setAuthValidation(): void {

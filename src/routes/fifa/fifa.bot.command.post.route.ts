@@ -1,5 +1,5 @@
 import { OnPost, Route, Request, ReplyNoContinue } from '@hapiness/core';
-import { FifaPredictorService } from '../../services';
+import { FifaPredictorService, OrganisationService } from '../../services';
 import { Observable } from 'rxjs/Observable';
 import * as Joi from 'joi';
 
@@ -20,7 +20,7 @@ import * as Joi from 'joi';
 })
 export class PostFifaSlackBotCommandRoute implements OnPost {
     private commands = null;
-    constructor(private fifa: FifaPredictorService) {
+    constructor(private fifa: FifaPredictorService/* , private organisation: OrganisationService */) {
         this.commands = {
             leaderboard: (params, leaderboard) => this.fifa.getLeaderboard(leaderboard, params),
             result: (params, leaderboard) => this.fifa.getLeaderboard(leaderboard, params),
@@ -34,7 +34,6 @@ export class PostFifaSlackBotCommandRoute implements OnPost {
      * @param request
      */
     onPost(request: Request, reply: ReplyNoContinue): Observable<any> {
-        console.log(`request.payload => `, request.payload);
         const command = this.commands[request.payload.text];
 
         if (!command) {
@@ -47,8 +46,11 @@ export class PostFifaSlackBotCommandRoute implements OnPost {
             return;
         }
 
-        reply();
+        reply({
+            username: 'fifabot',
+            response_type: 'ephemeral',
+            text: 'I need some times to prepare everything hang up there!'
+        });
         return command(request.payload, request.query.leaderboard);
-        // return ;
     }
 }

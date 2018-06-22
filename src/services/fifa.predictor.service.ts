@@ -5,6 +5,7 @@ import { HttpService } from '@hapiness/http';
 import '@hapiness/http/observable/add/validateResponse';
 import { FifaResult, Leaderboard, FifaResultResult } from '../models';
 import { Config } from '@hapiness/config';
+import { SlackService } from './slack.service';
 
 @Injectable()
 export class FifaPredictorService {
@@ -17,44 +18,23 @@ export class FifaPredictorService {
 
     private offset = 0;
 
-    constructor(private http: HttpService) { }
+    constructor(private http: HttpService, private slack: SlackService) { }
 
     getLeaderboard(leaderBoardId: string, params: any): any {
-        // if (this.cache.expiredAt > Date.now()) {
-        //     return Observable.of(this.cache.leaderboard);
-        // }
         const limit = 10;
         const url = `${this.baseUrl}leaderboard/${leaderBoardId}/1/?limit=${limit}&offset=`;
 
         this.fetchItems(url)
             .toArray<Leaderboard>()
             .map(results => results.map(({ id, ...leaderboard }) => leaderboard as Leaderboard))
-            // .do(result => {
-            //     this.cache.leaderboard = result;
-            //     this.cache.expiredAt = Date.now() + 36000
-            // })
-            // .flatMap(result => {
-            // })
             .flatMap(result => params.response_url ? Observable.of(result) : Observable.throw('no response_url to answer'))
-            .flatMap(result => {
-                const res = this.formatLadder(result);
-
-                return this.http.post(params.response_url, {
-                    headers: {
-                        'content-type': 'application/json'
-                    },
-                    body: res,
-                    json: true
-                })
-                .do(_abc_ => console.log(`RESPONSE ======> `, _abc_))
-                .validateResponse();
-            })
+            .flatMap(result => this.slack.sendDelayedResponse(params.response_url, this.slack.formatLadder(result)))
             .subscribe(null,
                 err => console.log('Error => ', err)
             );
     }
 
-    fetchItems(url): Observable<Leaderboard> {
+    fetchItems(url): Observable < Leaderboard > {
         return this.doCall(url)
             .flatMap(({ leaderboard, hasNext }) => {
                 const items$ = Observable.from(leaderboard);
@@ -76,7 +56,7 @@ export class FifaPredictorService {
         this.bearer = bearer;
     }
 
-    private doCall(url: string): Observable<FifaResultResult> {
+    private doCall(url: string): Observable < FifaResultResult > {
         return this.http.get(`${url}${this.offset}`, {
             headers: {
                 'access-control-allow-headers': 'Apikey, Origin, X-Requested-With, Content-Type, Accept, Authorization, ApiKey',
@@ -95,27 +75,5 @@ export class FifaPredictorService {
             });
     }
 
-    private formatLadder(ladders: Leaderboard[]): { username: string, response_type: string, attachments: any } {
 
-        const result: any = {
-            username: 'fifabot',
-            response_type: 'in_channel',
-            attachments: ladders.map((user) => ({
-                title: user.user_name,
-                text: `Current Position: *${user.position}* with *${user.points}* points`,
-                mrkdwn_in: ['text']
-            }))
-        };
-
-        result.attachments[0].pretext = 'Ladder';
-        result.attachments[0].title = result.attachments[0].title.concat(' 👑');
-        result.attachments[0].text = result.attachments[0].text.concat(' 🏅');
-        result.attachments[0].color = '#D4AF37';
-        result.attachments[1].text = result.attachments[1].text.concat(' 🥈');
-        result.attachments[1].color = '#C0C0C0';
-        result.attachments[2].text = result.attachments[2].text.concat(' 🥉');
-        result.attachments[2].color = 'cd7f32';
-
-        return result;
-    }
 }
