@@ -1,5 +1,5 @@
 import { OnPost, Route, Request, ReplyNoContinue } from '@hapiness/core';
-import { FifaPredictorService, OrganisationService } from '../../services';
+import { FifaPredictorService, OrganisationService, SlackService } from '../../services';
 import { Observable } from 'rxjs/Observable';
 import * as Joi from 'joi';
 
@@ -16,15 +16,15 @@ import * as Joi from 'joi';
         description: 'Get the leadeboard',
         tags: ['api', 'leaderboard']
     },
-    providers: [ FifaPredictorService ]
+    providers: [ FifaPredictorService, SlackService ]
 })
 export class PostFifaSlackBotCommandRoute implements OnPost {
     private commands = null;
-    constructor(private fifa: FifaPredictorService/* , private organisation: OrganisationService */) {
+    constructor(private fifa: FifaPredictorService, private organisation: OrganisationService) {
         this.commands = {
             leaderboard: (params, leaderboard) => this.fifa.getLeaderboard(leaderboard, params),
             result: (params, leaderboard) => this.fifa.getLeaderboard(leaderboard, params),
-            today: ''
+            today: () => this.organisation.getTodayMatches()
         }
     }
 

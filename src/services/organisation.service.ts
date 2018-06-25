@@ -17,11 +17,15 @@ export class OrganisationService {
     public retrieveData() {
         return this.http.get('https://raw.githubusercontent.com/lsv/fifa-worldcup-2018/master/data.json')
         .validateResponse()
-        .do(_abc_ => require('fs').writeFileSync('./data.json', _abc_));
+        .do(_abc_ => require('fs').writeFileSync('../data.json', _abc_));
     }
 
     public getTeams() {
         return this.teams;
+    }
+
+    public getTodayMatches() {
+        return [];
     }
 
     public getGroups(groupeName?: string) {

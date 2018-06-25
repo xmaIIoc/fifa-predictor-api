@@ -1,5 +1,5 @@
 import { Route, /* Request, */ OnGet } from '@hapiness/core';
-import { FifaPredictorService } from '../../services';
+import { FifaPredictorService, SlackService } from '../../services';
 import { Observable } from 'rxjs/Observable';
 import * as Joi from 'joi';
 
@@ -15,7 +15,7 @@ import * as Joi from 'joi';
         description: 'Get the leadeboard',
         tags: ['api', 'leaderboard']
     },
-    providers: [ FifaPredictorService ]
+    providers: [ FifaPredictorService, SlackService ]
 })
 export class GetFifaPredictorResultLeaderBoard implements OnGet {
     constructor(/* private fifa: FifaPredictorService */) {}
