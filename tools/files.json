@@ -1,8 +1,5 @@
 [
     { "name": "README.md" },
     { "name": "package.json" },
-    { "name": "config" },
-    { "name": "etc" },
-    { "name": "assets" },
-    { "name": "scripts" }
+    { "name": "config" }
 ]

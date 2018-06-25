@@ -11,13 +11,23 @@ import { HttpService } from '@hapiness/http';
 export class OrganisationService {
     private teams = null;
     private groups = null;
-    private knocksOut = null;
+    private matchesPerDay = null;
+    private knockout = null;
+    private stadiums = null;
     constructor(private http: HttpService) {}
 
     public retrieveData() {
         return this.http.get('https://raw.githubusercontent.com/lsv/fifa-worldcup-2018/master/data.json')
         .validateResponse()
-        .do(_abc_ => require('fs').writeFileSync('../data.json', _abc_));
+        .do(_abc_ => require('fs').writeFileSync('../data.json', _abc_))
+        .do((file: any) => {
+            this.teams = file.teams;
+            this.groups = file.groups;
+            this.knockout = file.knockout;
+            this.stadiums = file.stadiums;
+
+            this.matchesPerDay = this.computeMatches();
+        });
     }
 
     public getTeams() {
@@ -25,7 +35,7 @@ export class OrganisationService {
     }
 
     public getTodayMatches() {
-        return [];
+        return ;
     }
 
     public getGroups(groupeName?: string) {
@@ -40,6 +50,11 @@ export class OrganisationService {
     }
 
     public getKnockOuts() {
-        return this.knocksOut;
+        return this.knockout;
     }
+
+    private computeMatches() {
+
+    }
+
 }

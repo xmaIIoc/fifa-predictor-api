@@ -1,7 +1,6 @@
 {
     "extends": "./tsconfig.json",
     "compilerOptions": {
-        "noUnusedLocals": true,
         "outDir": "./dev",
         "rootDir": "./src",
         "types": [
@@ -14,7 +13,6 @@
         "tmp",
         "dev",
         "test",
-        "tools",
-        "migrations"
+        "tools"
     ]
 }
