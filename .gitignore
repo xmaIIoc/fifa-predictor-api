@@ -69,3 +69,5 @@ dev/
 dist/
 
 config/local-*.yml
+
+data.json
